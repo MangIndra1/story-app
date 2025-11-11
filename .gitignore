@@ -1,8 +1,8 @@
 # Directories
 .idea
 .vscode
-node_modules
-dist
+# Build results
+/node_modules
 
 # Files
 .env

@@ -8,9 +8,8 @@ module.exports = {
   },
   output: {
     filename: '[name].bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'docs'),
     publicPath: '',
-    clean: true,
   },
   module: {
     rules: [
@@ -25,12 +24,12 @@ module.exports = {
       template: path.resolve(__dirname, 'src/index.html'),
     }),
     new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: path.resolve(__dirname, 'src/public/'),
-          to: path.resolve(__dirname, 'dist/'),
-        },
-      ],
-    }),
+      patterns: [
+        {
+          from: path.resolve(__dirname, 'src/public/'),
+          to: path.resolve(__dirname, 'docs/'),
+        },
+      ],
+    }),
   ],
 };
