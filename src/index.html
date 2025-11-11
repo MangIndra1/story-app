@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="favicon.png" />
+
+    <title>Story App</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="manifest" href="manifest.json">
+  
+    <meta name="theme-color" content="#0d6efd">
+  </head>
+  <body>
+    <header>
+      <a href="#main-content" class="skip-link">Lompat ke Konten Utama</a>
+
+      <div class="main-header container">
+        <a class="brand-name" href="#/">Story App</a>
+
+        <nav id="navigation-drawer" class="navigation-drawer">
+          <ul id="nav-list" class="nav-list">
+            <li><a href="#/home">Beranda</a></li>
+            <li><a href="#/add-story">Tambah Cerita</a></li>
+
+            <div id="auth-navigation" class="nav-list-auth"></div>
+
+            <li class="nav__item nav-item-push">
+              <label for="pushToggle">Notifikasi:</label>
+              <input type="checkbox" id="pushToggle" class="push-toggle">
+            </li>
+          </ul>
+        </nav>
+
+        <button
+          id="drawer-button"
+          class="drawer-button"
+          aria-label="Buka menu navigasi"
+        >
+          ☰
+        </button>
+      </div>
+    </header>
+
+    <main id="main-content" class="main-content" tabindex="-1"></main>
+
+    <footer>
+      <p>Copyright © 2025 - Story App</p>
+    </footer>
+  </body>
+</html>
