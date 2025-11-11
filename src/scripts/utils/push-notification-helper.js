@@ -1,9 +1,7 @@
 import Swal from 'sweetalert2';
 
-// VAPID public key dari Story API
 const VAPID_PUBLIC_KEY = 'BCCs2eonMI-6H2ctvFaWg-UYdDv387Vno_bzUzALpB442r2lCnsHmtrx8biyPi_E-1fSGABK_Qs_GlvPoJJqxbk';
 
-// Helper function (tidak berubah)
 const urlBase64ToUint8Array = (base64String) => {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
   const base64 = (base64String + padding)
@@ -18,7 +16,6 @@ const urlBase64ToUint8Array = (base64String) => {
 };
 
 const PushNotificationHelper = {
-  // 1. Meminta izin notifikasi (ganti # dengan _)
   async _requestPermission() {
     const permission = await Notification.requestPermission();
     if (permission !== 'granted') {
@@ -26,7 +23,6 @@ const PushNotificationHelper = {
     }
   },
 
-  // 2. Berlangganan (Subscribe)
   async subscribe() {
     await this._requestPermission(); 
     
@@ -55,7 +51,6 @@ const PushNotificationHelper = {
     }
   },
 
-  // 3. Berhenti Berlangganan (Unsubscribe)
   async unsubscribe() {
     const serviceWorkerRegistration = await navigator.serviceWorker.ready;
     const existingSubscription = await serviceWorkerRegistration.pushManager.getSubscription();
@@ -76,11 +71,10 @@ const PushNotificationHelper = {
     }
   },
   
-  // 4. Pengecekan Status Langganan
   async isSubscribed() {
      const serviceWorkerRegistration = await navigator.serviceWorker.ready;
      const existingSubscription = await serviceWorkerRegistration.pushManager.getSubscription();
-     return !!existingSubscription; // true jika ada, false jika null
+     return !!existingSubscription;
   }
 };
 

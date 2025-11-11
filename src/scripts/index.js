@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     wb.addEventListener('installed', event => {
       if (event.isUpdate) {
         console.log('Service worker baru telah terinstal.');
-        // Tampilkan pop-up "Versi baru tersedia, refresh?"
         if (confirm('Aplikasi telah diperbarui. Muat ulang sekarang?')) {
           window.location.reload();
         }
@@ -45,12 +44,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   if (navigator.onLine) {
-    // Jika online saat memuat, langsung coba sinkronisasi
     console.log('Online saat memuat. Menjalankan sinkronisasi...');
     SyncHelper.syncOfflineStories();
   }
 
-  // Tambahkan listener jika beralih dari offline ke online
   window.addEventListener('online', () => {
     console.log('Koneksi kembali online! Menjalankan sinkronisasi...');
     SyncHelper.syncOfflineStories();

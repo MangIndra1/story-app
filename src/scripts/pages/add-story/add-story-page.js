@@ -2,7 +2,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import StoryApi from '../../data/story-api';
 import Swal from 'sweetalert2';
-import DbHelper from '../../utils/db-helper'; // Pastikan import DbHelper
+import DbHelper from '../../utils/db-helper';
 
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -194,7 +194,6 @@ export default class AddStoryPage {
     const mapElement = document.querySelector('#locationPickerMap');
     if (!mapElement) return;
 
-    // Hapus peta lama jika ada (penting untuk SPA)
     if (this.#map) {
       this.#map.remove();
       this.#map = null;
@@ -258,18 +257,16 @@ export default class AddStoryPage {
       });
   }
 
-  // === FUNGSI BARU UNTUK KONVERSI BLOB ===
   _convertBlobToArrayBuffer(blob) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onerror = reject;
       reader.onload = () => {
-        resolve(reader.result); // Hasilnya adalah ArrayBuffer
+        resolve(reader.result);
       };
       reader.readAsArrayBuffer(blob);
     });
   }
-  // ======================================
 
   _setupFormSubmit() {
     const addStoryForm = document.querySelector('#addStoryForm');
@@ -310,7 +307,6 @@ export default class AddStoryPage {
       submitButton.innerHTML = 'Mengunggah...';
 
       if (navigator.onLine) {
-        // --- LOGIKA ONLINE ---
         try {
           const formData = new FormData();
           formData.append('description', descriptionInput.value);
@@ -335,19 +331,17 @@ export default class AddStoryPage {
           submitButton.innerHTML = 'Bagikan Cerita';
         }
       } else {
-        // --- LOGIKA OFFLINE DENGAN PERBAIKAN ---
         console.log('Koneksi offline. Menyimpan cerita ke IndexedDB Outbox...');
         try {
           const photoData = this.#photoBlob || photoInput.files[0];
           
-          // PERBAIKAN: Ubah foto menjadi ArrayBuffer sebelum disimpan
           const photoBuffer = await this._convertBlobToArrayBuffer(photoData);
-          const photoType = photoData.type; // Simpan juga tipe file-nya
+          const photoType = photoData.type; 
 
           await DbHelper.putStory({
             description: descriptionInput.value,
-            photoBuffer: photoBuffer, // Simpan buffer
-            photoType: photoType,     // Simpan tipe file
+            photoBuffer: photoBuffer, 
+            photoType: photoType,     
             lat: this.#selectedLat,
             lon: this.#selectedLon,
             createdAt: new Date().toISOString(),
@@ -370,7 +364,6 @@ export default class AddStoryPage {
           
         } catch (dbError) {
           console.error('Gagal menyimpan ke IndexedDB:', dbError);
-          // Ini adalah error yang Anda lihat
           Swal.fire({ icon: 'error', title: 'Gagal Menyimpan', text: 'Gagal menyimpan cerita di perangkat Anda.' }); 
         } finally {
             submitButton.disabled = false;
@@ -386,7 +379,7 @@ export default class AddStoryPage {
     const descriptionInput = addStoryForm.elements.description;
     const photoInput = addStoryForm.elements.photo;
 
-    if (!addStoryForm || !submitButton || !descriptionInput || !photoInput) return; // Tambahkan penjagaan
+    if (!addStoryForm || !submitButton || !descriptionInput || !photoInput) return; 
 
     const isBasicFormValid = descriptionInput.checkValidity() && descriptionInput.value.trim() !== '' && (photoInput.files.length > 0 || !!this.#photoBlob); 
     const isLocationSelected = !!(this.#selectedLat && this.#selectedLon);

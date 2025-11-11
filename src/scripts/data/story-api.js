@@ -1,11 +1,9 @@
 import AuthUtils from '../utils/auth-utils';
 
-// Definisikan BASE_URL langsung di sini
 const BASE_URL = 'https://story-api.dicoding.dev/v1';
 
 const StoryApi = {
   async register({ name, email, password }) {
-    // Gunakan BASE_URL (tanpa Config.)
     const response = await fetch(`${BASE_URL}/register`, {
       method: 'POST',
       headers: {
@@ -24,7 +22,6 @@ const StoryApi = {
   },
 
   async login({ email, password }) {
-    // Gunakan BASE_URL
     const response = await fetch(`${BASE_URL}/login`, {
       method: 'POST',
       headers: {
@@ -48,7 +45,6 @@ const StoryApi = {
       throw new Error('Anda harus login untuk melihat cerita.');
     }
 
-    // Gunakan BASE_URL
     const response = await fetch(`${BASE_URL}/stories`, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -70,7 +66,6 @@ const StoryApi = {
       throw new Error('Anda harus login untuk menambahkan cerita.');
     }
 
-    // Gunakan BASE_URL
     const response = await fetch(`${BASE_URL}/stories`, {
       method: 'POST',
       headers: {

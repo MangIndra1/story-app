@@ -46,7 +46,6 @@ class App {
           event.target.checked = false;
         }
       } else {
-        // Jika tidak dicentang, unsubscribe
         await PushNotificationHelper.unsubscribe();
       }
     });
@@ -124,12 +123,10 @@ class App {
     const publicOnlyRoutes = ['/login', '/register'];
 
     if (protectedRoutes.includes(path) && !isLoggedIn) {
-      
       window.location.hash = '#/login';
       return;
     }
     if (publicOnlyRoutes.includes(path) && isLoggedIn) {
-      
       window.location.hash = '#/home';
       return;
     }
