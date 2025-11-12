@@ -1,0 +1,8 @@
+# Directories
+.idea
+.vscode
+# Build results
+/node_modules
+
+# Files
+.env
