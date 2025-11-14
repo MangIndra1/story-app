@@ -82,6 +82,26 @@ const StoryApi = {
 
     return responseJson;
   },
+
+  async subbscribeNotification({ endpoint, keys: { p256dh, auth } }) {
+    const token = AuthUtils.getUserToken();
+    const data = JSON.stringify({
+      endpoint,
+      keys: { p256dh, auth },
+    });
+    const response = await fetch(`${BASE_URL}/notifications/subscribe`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: data,
+    });
+    const responseJson = await response.json();
+    if (responseJson.error) {
+      throw new Error(responseJson.message);
+    }
+  },
 };
 
 export default StoryApi;

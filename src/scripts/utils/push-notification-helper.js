@@ -1,4 +1,5 @@
 import Swal from 'sweetalert2';
+import StoryApi from '../data/story-api';
 
 const VAPID_PUBLIC_KEY = 'BCCs2eonMI-6H2ctvFaWg-UYdDv387Vno_bzUzALpB442r2lCnsHmtrx8biyPi_E-1fSGABK_Qs_GlvPoJJqxbk';
 
@@ -24,30 +25,35 @@ const PushNotificationHelper = {
   },
 
   async subscribe() {
-    await this._requestPermission(); 
-    
+    await this._requestPermission();
     const serviceWorkerRegistration = await navigator.serviceWorker.ready;
     try {
-      const subscription = await serviceWorkerRegistration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+      const subscription =
+        await serviceWorkerRegistration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+        });
+      
+      const { endpoint, keys } = subscription.toJSON();
+      await StoryApi.subbscribeNotification({ endpoint, keys }).then(() => {
+        Swal.fire(
+          'Berhasil!',
+          'Anda telah berlangganan notifikasi.',
+          'success',
+        );
       });
       
-      console.log('Berhasil berlangganan:', subscription.toJSON());
-      Swal.fire('Berhasil!', 'Anda telah berlangganan notifikasi.', 'success');
-      return subscription; 
-      
+      return subscription;
     } catch (error) {
       console.error('Gagal berlangganan:', error);
-      
-      const existingSubscription = await serviceWorkerRegistration.pushManager.getSubscription();
+      const existingSubscription =
+        await serviceWorkerRegistration.pushManager.getSubscription();
       if (existingSubscription) {
         console.log('Langganan sudah ada:', existingSubscription.toJSON());
         return existingSubscription;
       }
-      
       Swal.fire('Gagal', 'Gagal berlangganan notifikasi.', 'error');
-      throw error; 
+      throw error;
     }
   },
 
