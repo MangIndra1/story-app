@@ -30,8 +30,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if ('serviceWorker' in navigator) {
     const wb = new Workbox('/sw.js');
-    
-    wb.addEventListener('installed', event => {
+
+    wb.addEventListener('installed', (event) => {
       if (event.isUpdate) {
         console.log('Service worker baru telah terinstal.');
         if (confirm('Aplikasi telah diperbarui. Muat ulang sekarang?')) {

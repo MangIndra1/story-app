@@ -47,7 +47,7 @@ const StoryApi = {
 
     const response = await fetch(`${BASE_URL}/stories`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -69,7 +69,7 @@ const StoryApi = {
     const response = await fetch(`${BASE_URL}/stories`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: formData,
     });
@@ -77,7 +77,9 @@ const StoryApi = {
     const responseJson = await response.json();
 
     if (!response.ok || responseJson.error) {
-      throw new Error(responseJson.message || `HTTP error! status: ${response.status}`);
+      throw new Error(
+        responseJson.message || `HTTP error! status: ${response.status}`,
+      );
     }
 
     return responseJson;
@@ -93,7 +95,7 @@ const StoryApi = {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: data,
     });

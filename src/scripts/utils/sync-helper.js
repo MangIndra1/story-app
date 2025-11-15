@@ -11,7 +11,7 @@ const SyncHelper = {
   async syncOfflineStories() {
     console.log('Mencoba sinkronisasi cerita offline...');
     const stories = await DbHelper.getAllStories();
-    
+
     if (stories.length === 0) {
       console.log('Tidak ada cerita di outbox untuk disinkronkan.');
       return;
@@ -32,22 +32,21 @@ const SyncHelper = {
     for (const story of stories) {
       try {
         const photoFile = bufferToFile(
-          story.photoBuffer, 
-          story.photoType, 
-          'offline-story.jpg'
+          story.photoBuffer,
+          story.photoType,
+          'offline-story.jpg',
         );
-        
+
         const formData = new FormData();
         formData.append('description', story.description);
         formData.append('photo', photoFile);
         formData.append('lat', story.lat);
         formData.append('lon', story.lon);
-        
+
         await StoryApi.addStory(formData);
-        
+
         await DbHelper.deleteStory(story.id);
         successCount++;
-        
       } catch (error) {
         console.error(`Gagal sinkronisasi cerita ID ${story.id}:`, error);
         failCount++;
@@ -63,7 +62,7 @@ const SyncHelper = {
         text: `${successCount} cerita berhasil dikirim ke server.`,
       }).then(() => {
         window.location.hash = '#/home';
-        window.location.reload(); 
+        window.location.reload();
       });
     } else if (failCount > 0 && successCount === 0) {
       Swal.fire({

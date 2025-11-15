@@ -1,7 +1,11 @@
 import { precacheAndRoute } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
-import { NetworkFirst, CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
+import {
+  NetworkFirst,
+  CacheFirst,
+  StaleWhileRevalidate,
+} from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { skipWaiting, clientsClaim } from 'workbox-core';
 
@@ -18,9 +22,7 @@ registerRoute(
     url.origin === 'https://fonts.gstatic.com',
   new StaleWhileRevalidate({
     cacheName: 'google-fonts',
-    plugins: [
-      new CacheableResponsePlugin({ statuses: [0, 200] }),
-    ],
+    plugins: [new CacheableResponsePlugin({ statuses: [0, 200] })],
   }),
 );
 
@@ -53,37 +55,38 @@ registerRoute(
 );
 
 self.addEventListener('push', (event) => {
-  console.log('[Service Worker] Push Received.');
-  
-  let data;
-  try {
-    data = event.data.json();
-  } catch (e) {
-    data = {
-      title: 'Story App Notification',
-      options: {
-        body: event.data.text(),
-      },
-    };
-  }
+  console.log('[Service Worker] Push Diterima.');
 
-  const options = {
-    body: data.options.body || 'Notifikasi baru dari Story App.',
+  let notificationTitle = 'Notifikasi Baru';
+  let notificationOptions = {
+    body: 'Anda memiliki pesan baru.',
     icon: 'images/icons/icon-192x192.png',
     badge: 'images/icons/icon-192x192.png',
-    data: {
-      url: data.options.url || '/#/home',
-    },
-    actions: [
-      {
-        action: 'explore-action',
-        title: 'Lihat Cerita',
-      },
-    ],
+    data: { url: '/#/home' },
+    actions: [{ action: 'explore-action', title: 'Buka Aplikasi' }],
   };
 
+  if (event.data) {
+    try {
+      const data = event.data.json();
+
+      notificationTitle = data.title;
+      notificationOptions.body = data.options.body;
+
+      if (data.options.url) {
+        notificationOptions.data.url = data.options.url;
+      }
+
+      console.log('[Service Worker] Push data (JSON):', data);
+    } catch (e) {
+      const textData = event.data.text();
+      notificationOptions.body = textData;
+      console.log('[Service Worker] Push data (Teks):', textData);
+    }
+  }
+
   event.waitUntil(
-    self.registration.showNotification(data.title, options)
+    self.registration.showNotification(notificationTitle, notificationOptions),
   );
 });
 
@@ -96,13 +99,9 @@ self.addEventListener('notificationclick', (event) => {
 
   if (event.action === 'explore-action') {
     console.log('Action button clicked');
-    event.waitUntil(
-      clients.openWindow(urlToOpen)
-    );
+    event.waitUntil(clients.openWindow(urlToOpen));
   } else {
     console.log('Notification body clicked');
-    event.waitUntil(
-      clients.openWindow(urlToOpen)
-    );
+    event.waitUntil(clients.openWindow(urlToOpen));
   }
 });

@@ -7,8 +7,12 @@ import DbHelper from '../../utils/db-helper';
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 let DefaultIcon = L.icon({
-    iconUrl: icon, shadowUrl: iconShadow, iconSize: [25, 41], iconAnchor: [12, 41],
-    popupAnchor: [1, -34], shadowSize: [41, 41]
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
@@ -76,13 +80,19 @@ export default class AddStoryPage {
     cancelCameraButton.addEventListener('click', () => this._stopCamera());
 
     const descriptionInput = document.querySelector('#storyDescription');
-    const photoInput = document.querySelector('#storyPhoto'); 
-    descriptionInput.addEventListener('blur', (event) => this._validateField(event.target, 'descriptionError'));
-    photoInput.addEventListener('blur', (event) => this._validateField(event.target, 'photoError'));
-    descriptionInput.addEventListener('input', (event) => this._validateField(event.target, 'descriptionError'));
+    const photoInput = document.querySelector('#storyPhoto');
+    descriptionInput.addEventListener('blur', (event) =>
+      this._validateField(event.target, 'descriptionError'),
+    );
+    photoInput.addEventListener('blur', (event) =>
+      this._validateField(event.target, 'photoError'),
+    );
+    descriptionInput.addEventListener('input', (event) =>
+      this._validateField(event.target, 'descriptionError'),
+    );
     photoInput.addEventListener('change', (event) => {
-        this._validateField(event.target, 'photoError');
-        this.#photoBlob = null; 
+      this._validateField(event.target, 'photoError');
+      this.#photoBlob = null;
     });
   }
 
@@ -91,30 +101,33 @@ export default class AddStoryPage {
     const previewImage = document.querySelector('#previewImage');
     const cameraControls = document.querySelector('#cameraControls');
     const photoInput = document.querySelector('#storyPhoto');
-    
+
     previewImage.classList.remove('active');
     videoElement.classList.add('active');
     cameraControls.style.display = 'flex';
-    photoInput.value = ''; 
-    this.#photoBlob = null; 
+    photoInput.value = '';
+    this.#photoBlob = null;
 
     try {
-      if (this.#stream) { 
+      if (this.#stream) {
         this._stopCameraStreamTracks();
       }
-      this.#stream = await navigator.mediaDevices.getUserMedia({ 
-          video: { facingMode: 'environment' }, 
-          audio: false 
+      this.#stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: 'environment' },
+        audio: false,
       });
       videoElement.srcObject = this.#stream;
-      await videoElement.play(); 
-      this._checkOverallValidity(); 
-      this._validateField(photoInput, 'photoError'); 
-
+      await videoElement.play();
+      this._checkOverallValidity();
+      this._validateField(photoInput, 'photoError');
     } catch (error) {
       console.error('Gagal mengakses kamera!', error);
-      Swal.fire({ icon: 'error', title: 'Kamera Error', text: 'Tidak bisa mengakses kamera. Pastikan Anda memberikan izin.' });
-      this._stopCamera(); 
+      Swal.fire({
+        icon: 'error',
+        title: 'Kamera Error',
+        text: 'Tidak bisa mengakses kamera. Pastikan Anda memberikan izin.',
+      });
+      this._stopCamera();
     }
   }
 
@@ -128,66 +141,80 @@ export default class AddStoryPage {
     canvasElement.height = videoElement.videoHeight;
 
     const context = canvasElement.getContext('2d');
-    context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+    context.drawImage(
+      videoElement,
+      0,
+      0,
+      canvasElement.width,
+      canvasElement.height,
+    );
 
     canvasElement.toBlob((blob) => {
-        this.#photoBlob = blob; 
-        previewImage.src = URL.createObjectURL(blob); 
+      this.#photoBlob = blob;
+      previewImage.src = URL.createObjectURL(blob);
 
-        photoInput.value = ''; 
+      photoInput.value = '';
 
-        this._stopCamera(); 
-        this._validateField(photoInput, 'photoError'); 
-        this._checkOverallValidity(); 
-    }, 'image/jpeg'); 
+      this._stopCamera();
+      this._validateField(photoInput, 'photoError');
+      this._checkOverallValidity();
+    }, 'image/jpeg');
   }
 
   _stopCamera() {
     const videoElement = document.querySelector('#cameraStream');
     const previewImage = document.querySelector('#previewImage');
     const cameraControls = document.querySelector('#cameraControls');
-    
-    this._stopCameraStreamTracks(); 
-    videoElement.srcObject = null; 
-    
+
+    this._stopCameraStreamTracks();
+    videoElement.srcObject = null;
+
     videoElement.classList.remove('active');
     if (this.#photoBlob) {
-        previewImage.classList.add('active'); 
+      previewImage.classList.add('active');
     } else {
-        previewImage.classList.remove('active'); 
+      previewImage.classList.remove('active');
     }
-    cameraControls.style.display = 'none'; 
-    this._checkOverallValidity(); 
+    cameraControls.style.display = 'none';
+    this._checkOverallValidity();
   }
-  
+
   _stopCameraStreamTracks() {
-      if (this.#stream) {
-          this.#stream.getTracks().forEach(track => track.stop());
-          this.#stream = null;
-      }
+    if (this.#stream) {
+      this.#stream.getTracks().forEach((track) => track.stop());
+      this.#stream = null;
+    }
   }
 
   _validateField(inputElement, errorElementId) {
     const errorElement = document.querySelector(`#${errorElementId}`);
-    let isValid = inputElement.checkValidity(); 
+    let isValid = inputElement.checkValidity();
 
-    if (inputElement.type === 'file' && inputElement.files.length === 0 && !this.#photoBlob) {
+    if (
+      inputElement.type === 'file' &&
+      inputElement.files.length === 0 &&
+      !this.#photoBlob
+    ) {
       isValid = false;
     }
-    if (inputElement.tagName === 'TEXTAREA' && inputElement.value.trim() === '') {
-        isValid = false;
+    if (
+      inputElement.tagName === 'TEXTAREA' &&
+      inputElement.value.trim() === ''
+    ) {
+      isValid = false;
     }
 
     if (!isValid) {
-      inputElement.classList.add('is-invalid'); 
-      errorElement.style.display = 'block'; 
-      errorElement.textContent = inputElement.validationMessage || 'Input tidak valid.';
+      inputElement.classList.add('is-invalid');
+      errorElement.style.display = 'block';
+      errorElement.textContent =
+        inputElement.validationMessage || 'Input tidak valid.';
     } else {
-      inputElement.classList.remove('is-invalid'); 
-      errorElement.style.display = 'none'; 
-      errorElement.textContent = ''; 
+      inputElement.classList.remove('is-invalid');
+      errorElement.style.display = 'none';
+      errorElement.textContent = '';
     }
-    return isValid; 
+    return isValid;
   }
 
   _initializeMap() {
@@ -199,10 +226,11 @@ export default class AddStoryPage {
       this.#map = null;
     }
 
-    this.#map = L.map(mapElement).setView([-2.5489, 118.0149], 5); 
+    this.#map = L.map(mapElement).setView([-2.5489, 118.0149], 5);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(this.#map);
 
     this.#map.on('click', (e) => {
@@ -217,44 +245,46 @@ export default class AddStoryPage {
         this.#map.removeLayer(this.#marker);
       }
 
-      this.#marker = L.marker([lat, lng]).addTo(this.#map)
-                      .bindPopup("Lokasi cerita dipilih.").openPopup();
-      
+      this.#marker = L.marker([lat, lng])
+        .addTo(this.#map)
+        .bindPopup('Lokasi cerita dipilih.')
+        .openPopup();
+
       document.querySelector('#locationError').style.display = 'none';
-      document.querySelector('#mapInstruction').style.display = 'none'; 
-      this._checkOverallValidity(); 
+      document.querySelector('#mapInstruction').style.display = 'none';
+      this._checkOverallValidity();
     });
   }
 
   _setupImagePreview() {
-      const photoInput = document.querySelector('#storyPhoto');
-      const previewImage = document.querySelector('#previewImage');
-      const videoElement = document.querySelector('#cameraStream');
-      const cameraControls = document.querySelector('#cameraControls');
+    const photoInput = document.querySelector('#storyPhoto');
+    const previewImage = document.querySelector('#previewImage');
+    const videoElement = document.querySelector('#cameraStream');
+    const cameraControls = document.querySelector('#cameraControls');
 
-      previewImage.classList.remove('active');
-      videoElement.classList.remove('active'); 
+    previewImage.classList.remove('active');
+    videoElement.classList.remove('active');
 
-      photoInput.addEventListener('change', () => {
-          this._stopCameraStreamTracks(); 
-          videoElement.classList.remove('active');
-          if (cameraControls) cameraControls.style.display = 'none'; 
+    photoInput.addEventListener('change', () => {
+      this._stopCameraStreamTracks();
+      videoElement.classList.remove('active');
+      if (cameraControls) cameraControls.style.display = 'none';
 
-          const file = photoInput.files[0];
-          if (file) {
-              const reader = new FileReader();
-              reader.onload = (e) => {
-                  previewImage.src = e.target.result;
-                  previewImage.classList.add('active'); 
-                  this.#photoBlob = null; 
-              }
-              reader.readAsDataURL(file);
-          } else {
-              previewImage.classList.remove('active'); 
-          }
-          this._validateField(photoInput, 'photoError');
-          this._checkOverallValidity(); 
-      });
+      const file = photoInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewImage.src = e.target.result;
+          previewImage.classList.add('active');
+          this.#photoBlob = null;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        previewImage.classList.remove('active');
+      }
+      this._validateField(photoInput, 'photoError');
+      this._checkOverallValidity();
+    });
   }
 
   _convertBlobToArrayBuffer(blob) {
@@ -270,11 +300,13 @@ export default class AddStoryPage {
 
   _setupFormSubmit() {
     const addStoryForm = document.querySelector('#addStoryForm');
-    
-    const inputs = addStoryForm.querySelectorAll('textarea, input[type="file"]');
-    inputs.forEach(input => {
-      input.addEventListener('input', () => this._checkOverallValidity()); 
-      input.addEventListener('blur', () => this._checkOverallValidity()); 
+
+    const inputs = addStoryForm.querySelectorAll(
+      'textarea, input[type="file"]',
+    );
+    inputs.forEach((input) => {
+      input.addEventListener('input', () => this._checkOverallValidity());
+      input.addEventListener('blur', () => this._checkOverallValidity());
     });
     this._checkOverallValidity();
 
@@ -286,8 +318,11 @@ export default class AddStoryPage {
       const photoInput = addStoryForm.elements.photo;
       const submitButton = addStoryForm.querySelector('button[type="submit"]');
 
-      const isDescriptionValid = this._validateField(descriptionInput, 'descriptionError');
-      const isPhotoValid = this._validateField(photoInput, 'photoError'); 
+      const isDescriptionValid = this._validateField(
+        descriptionInput,
+        'descriptionError',
+      );
+      const isPhotoValid = this._validateField(photoInput, 'photoError');
       let isLocationValid = true;
       if (!this.#selectedLat || !this.#selectedLon) {
         document.querySelector('#locationError').style.display = 'block';
@@ -297,10 +332,14 @@ export default class AddStoryPage {
       }
 
       const isFormValid = isDescriptionValid && isPhotoValid && isLocationValid;
-      
+
       if (!isFormValid) {
-        Swal.fire({ icon: 'warning', title: 'Input Tidak Valid', text: 'Periksa kembali semua isian yang ditandai.' });
-        return; 
+        Swal.fire({
+          icon: 'warning',
+          title: 'Input Tidak Valid',
+          text: 'Periksa kembali semua isian yang ditandai.',
+        });
+        return;
       }
 
       submitButton.disabled = true;
@@ -311,21 +350,29 @@ export default class AddStoryPage {
           const formData = new FormData();
           formData.append('description', descriptionInput.value);
           if (this.#photoBlob) {
-              formData.append('photo', this.#photoBlob, 'camera-photo.jpg'); 
+            formData.append('photo', this.#photoBlob, 'camera-photo.jpg');
           } else {
-              formData.append('photo', photoInput.files[0]);
+            formData.append('photo', photoInput.files[0]);
           }
           formData.append('lat', this.#selectedLat);
           formData.append('lon', this.#selectedLon);
-          
-          await StoryApi.addStory(formData); 
+
+          await StoryApi.addStory(formData);
           Swal.fire({
-            icon: 'success', title: 'Berhasil!', text: 'Cerita baru berhasil dibagikan.', timer: 1500, showConfirmButton: false,
+            icon: 'success',
+            title: 'Berhasil!',
+            text: 'Cerita baru berhasil dibagikan.',
+            timer: 1500,
+            showConfirmButton: false,
           }).then(() => {
-            window.location.hash = '#/home'; 
+            window.location.hash = '#/home';
           });
         } catch (error) {
-          Swal.fire({ icon: 'error', title: 'Upload Gagal', text: error.message || 'Terjadi kesalahan saat mengunggah cerita.' });
+          Swal.fire({
+            icon: 'error',
+            title: 'Upload Gagal',
+            text: error.message || 'Terjadi kesalahan saat mengunggah cerita.',
+          });
         } finally {
           submitButton.disabled = false;
           submitButton.innerHTML = 'Bagikan Cerita';
@@ -334,19 +381,19 @@ export default class AddStoryPage {
         console.log('Koneksi offline. Menyimpan cerita ke IndexedDB Outbox...');
         try {
           const photoData = this.#photoBlob || photoInput.files[0];
-          
+
           const photoBuffer = await this._convertBlobToArrayBuffer(photoData);
-          const photoType = photoData.type; 
+          const photoType = photoData.type;
 
           await DbHelper.putStory({
             description: descriptionInput.value,
-            photoBuffer: photoBuffer, 
-            photoType: photoType,     
+            photoBuffer: photoBuffer,
+            photoType: photoType,
             lat: this.#selectedLat,
             lon: this.#selectedLon,
             createdAt: new Date().toISOString(),
           });
-          
+
           Swal.fire({
             icon: 'info',
             title: 'Berhasil Disimpan!',
@@ -356,34 +403,41 @@ export default class AddStoryPage {
             this.#photoBlob = null;
             const previewImage = document.querySelector('#previewImage');
             if (previewImage) {
-                previewImage.src = '#';
-                previewImage.classList.remove('active');
+              previewImage.src = '#';
+              previewImage.classList.remove('active');
             }
             window.location.hash = '#/home';
           });
-          
         } catch (dbError) {
           console.error('Gagal menyimpan ke IndexedDB:', dbError);
-          Swal.fire({ icon: 'error', title: 'Gagal Menyimpan', text: 'Gagal menyimpan cerita di perangkat Anda.' }); 
+          Swal.fire({
+            icon: 'error',
+            title: 'Gagal Menyimpan',
+            text: 'Gagal menyimpan cerita di perangkat Anda.',
+          });
         } finally {
-            submitButton.disabled = false;
-            submitButton.innerHTML = 'Bagikan Cerita';
+          submitButton.disabled = false;
+          submitButton.innerHTML = 'Bagikan Cerita';
         }
       }
     });
   }
-  
+
   _checkOverallValidity() {
     const addStoryForm = document.querySelector('#addStoryForm');
-    const submitButton = addStoryForm.querySelector('button[type="submit"]'); 
+    const submitButton = addStoryForm.querySelector('button[type="submit"]');
     const descriptionInput = addStoryForm.elements.description;
     const photoInput = addStoryForm.elements.photo;
 
-    if (!addStoryForm || !submitButton || !descriptionInput || !photoInput) return; 
+    if (!addStoryForm || !submitButton || !descriptionInput || !photoInput)
+      return;
 
-    const isBasicFormValid = descriptionInput.checkValidity() && descriptionInput.value.trim() !== '' && (photoInput.files.length > 0 || !!this.#photoBlob); 
+    const isBasicFormValid =
+      descriptionInput.checkValidity() &&
+      descriptionInput.value.trim() !== '' &&
+      (photoInput.files.length > 0 || !!this.#photoBlob);
     const isLocationSelected = !!(this.#selectedLat && this.#selectedLon);
-    
+
     submitButton.disabled = !(isBasicFormValid && isLocationSelected);
   }
 }

@@ -18,9 +18,19 @@ class App {
     this.#authNavigation = document.querySelector('#auth-navigation');
     this.#pushToggle = document.querySelector('#pushToggle');
 
-    if (!this.#content || !this.#drawerButton || !this.#navigationDrawer || !this.#authNavigation || !this.#pushToggle) {
-      console.error('Initialization Error: One or more essential elements are missing!');
-      throw new Error('Essential DOM elements not found during App initialization.'); 
+    if (
+      !this.#content ||
+      !this.#drawerButton ||
+      !this.#navigationDrawer ||
+      !this.#authNavigation ||
+      !this.#pushToggle
+    ) {
+      console.error(
+        'Initialization Error: One or more essential elements are missing!',
+      );
+      throw new Error(
+        'Essential DOM elements not found during App initialization.',
+      );
     }
 
     this._setupDrawer();
@@ -110,7 +120,10 @@ class App {
   }
 
   async renderPage() {
-    if (this.#currentPage && typeof this.#currentPage._stopCameraStreamTracks === 'function') {
+    if (
+      this.#currentPage &&
+      typeof this.#currentPage._stopCameraStreamTracks === 'function'
+    ) {
       console.log('Stopping camera stream from previous page...');
       this.#currentPage._stopCameraStreamTracks();
     }
